@@ -1,6 +1,6 @@
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
-import { extname, join, normalize } from "node:path";
+import { extname, relative, resolve, sep } from "node:path";
 
 const root = process.cwd();
 const port = Number(process.env.PORT ?? 4173);
@@ -15,9 +15,10 @@ const types = {
 const server = createServer(async (request, response) => {
   const url = new URL(request.url ?? "/", `http://${request.headers.host}`);
   const pathname = url.pathname === "/" ? "/index.html" : url.pathname;
-  const filePath = normalize(join(root, pathname));
+  const filePath = resolve(root, `.${pathname}`);
+  const relativePath = relative(root, filePath);
 
-  if (!filePath.startsWith(root)) {
+  if (relativePath.startsWith("..") || relativePath.includes(`..${sep}`)) {
     response.writeHead(403);
     response.end("Forbidden");
     return;
