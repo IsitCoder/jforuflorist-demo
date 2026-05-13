@@ -27,12 +27,13 @@ export function validateOrder(order) {
 export function buildWhatsAppMessage(product, order) {
   const specialRequest = String(order.specialRequest ?? "").trim() || "None";
   const cardMessage = String(order.cardMessage ?? "").trim() || "None";
+  const productName = typeof product.name === "string" ? product.name : product.name.en;
 
   return [
     "Hi jforuflorist flower studio, I would like to place an order.",
     "",
     "Order Details",
-    `Product: ${product.name}`,
+    `Product: ${productName}`,
     `Category: ${product.categoryLabel}`,
     `Size: ${order.size}`,
     `Quantity: ${order.quantity}`,

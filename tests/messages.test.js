@@ -6,6 +6,7 @@ import {
   filterProducts,
   validateOrder,
 } from "../src/messages.js";
+import { products as floristProducts } from "../src/data.js";
 
 const products = [
   { id: "a", category: "bouquets", occasions: ["birthday"], name: "A" },
@@ -48,5 +49,25 @@ test("buildWhatsAppMessage includes selected product and order details", () => {
 
 test("buildWhatsAppUrl encodes message for wa.me", () => {
   const url = buildWhatsAppUrl("60123456789", "Hello flower studio");
+  assert.equal(url, "https://wa.me/60123456789?text=Hello%20flower%20studio");
+});
+
+test("buildWhatsAppMessage supports localized product data", () => {
+  const message = buildWhatsAppMessage(floristProducts[0], order);
+  assert.match(message, /Product: Sweet Peony Bouquet/);
+  assert.doesNotMatch(message, /\[object Object\]/);
+});
+
+test("buildWhatsAppMessage prints None for empty optional text", () => {
+  const message = buildWhatsAppMessage(
+    { name: "Blush Gift Flower Box", categoryLabel: "Flower Box" },
+    { ...order, cardMessage: "", specialRequest: "" }
+  );
+  assert.match(message, /Card Message\nNone/);
+  assert.match(message, /Special Request\nNone/);
+});
+
+test("buildWhatsAppUrl strips non-digits from phone number", () => {
+  const url = buildWhatsAppUrl("+60 12-345 6789", "Hello flower studio");
   assert.equal(url, "https://wa.me/60123456789?text=Hello%20flower%20studio");
 });
