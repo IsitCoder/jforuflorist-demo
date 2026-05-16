@@ -6,7 +6,13 @@ import {
   filterProducts,
   validateOrder,
 } from "../src/messages.js";
-import { products as floristProducts } from "../src/data.js";
+import {
+  WHATSAPP_NUMBER,
+  contact,
+  galleryImages,
+  products as floristProducts,
+  translations,
+} from "../src/data.js";
 
 const products = [
   { id: "a", category: "bouquets", occasions: ["birthday"], name: "A" },
@@ -70,4 +76,28 @@ test("buildWhatsAppMessage prints None for empty optional text", () => {
 test("buildWhatsAppUrl strips non-digits from phone number", () => {
   const url = buildWhatsAppUrl("+60 12-345 6789", "Hello flower studio");
   assert.equal(url, "https://wa.me/60123456789?text=Hello%20flower%20studio");
+});
+
+test("florist contact configuration uses provided shop details", () => {
+  assert.equal(WHATSAPP_NUMBER, "60162969982");
+  assert.equal(contact.phone, "60162969982");
+  assert.equal(contact.ssm, "JR0162620-K");
+  assert.match(contact.location.en, /Nibong Tebal/);
+  assert.match(contact.location.en, /Cameron Highland/);
+});
+
+test("products and gallery use local flower photo assets", () => {
+  assert.ok(floristProducts.every((product) => product.image?.startsWith("./assets/flowers/")));
+  assert.ok(galleryImages.length >= 6);
+  assert.ok(galleryImages.every((image) => image.src.startsWith("./assets/flowers/")));
+});
+
+test("new redesign labels exist in both languages", () => {
+  for (const language of ["en", "zh"]) {
+    assert.equal(typeof translations[language].about, "string");
+    assert.equal(typeof translations[language].gallery, "string");
+    assert.equal(typeof translations[language].reviewOrder, "string");
+    assert.equal(typeof translations[language].sendWhatsappOrder, "string");
+    assert.equal(typeof translations[language].editDetails, "string");
+  }
 });
