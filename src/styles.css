@@ -323,3 +323,98 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+.product-panel-shell:not(:empty) {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(49, 37, 34, 0.36);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+
+.product-panel {
+  width: min(1040px, 100%);
+  max-height: min(860px, calc(100vh - 40px));
+  overflow: auto;
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+}
+
+.panel-header,
+.panel-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.panel-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.2fr);
+  gap: 24px;
+}
+
+.panel-image {
+  border-radius: var(--radius);
+  min-height: 320px;
+}
+
+.panel-note {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.order-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.field {
+  display: grid;
+  gap: 7px;
+  color: var(--muted);
+  font-weight: 650;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 11px 12px;
+  color: var(--ink);
+  background: #fff;
+}
+
+.field textarea {
+  min-height: 86px;
+  resize: vertical;
+}
+
+.field.wide,
+.panel-actions {
+  grid-column: 1 / -1;
+}
+
+.field.has-error input,
+.field.has-error textarea,
+.field.has-error select {
+  border-color: var(--accent-dark);
+}
+
+.field small {
+  color: var(--accent-dark);
+}
+
+@media (max-width: 760px) {
+  .panel-grid,
+  .order-form {
+    grid-template-columns: 1fr;
+  }
+}

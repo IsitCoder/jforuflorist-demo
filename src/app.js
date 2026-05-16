@@ -1,16 +1,38 @@
 import { categories, faq, occasions, products, translations, WHATSAPP_NUMBER } from "./data.js";
-import { filterProducts } from "./messages.js";
+import { buildWhatsAppMessage, buildWhatsAppUrl, filterProducts, validateOrder } from "./messages.js";
 
 const state = {
   language: "en",
   category: "all",
   occasion: "all",
   selectedProductId: products[0].id,
+  panelOpen: false,
+  order: {
+    buyerName: "",
+    buyerPhone: "",
+    serviceType: "Delivery",
+    quantity: "1",
+    date: "",
+    eventTime: "",
+    size: products[0].sizes[0],
+    recipientName: "",
+    recipientPhone: "",
+    deliveryAddress: "",
+    cardMessage: "",
+    specialRequest: "",
+  },
+  missingFields: [],
 };
 
 const $ = (selector) => document.querySelector(selector);
 const text = (value) => (typeof value === "string" ? value : value[state.language]);
 const t = (key) => translations[state.language][key] ?? key;
+const escapeHtml = (value) =>
+  String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
 
 function renderHeader() {
   $("[data-js='header']").innerHTML = `
@@ -158,12 +180,99 @@ function renderFaq() {
   `;
 }
 
+function selectedProduct() {
+  return products.find((product) => product.id === state.selectedProductId) ?? products[0];
+}
+
+function renderField(name, label, type = "text") {
+  const isMissing = state.missingFields.includes(name);
+  return `
+    <label class="field ${isMissing ? "has-error" : ""}">
+      <span>${label}</span>
+      <input type="${type}" name="${name}" value="${escapeHtml(state.order[name])}" />
+      ${isMissing ? `<small>Required</small>` : ""}
+    </label>
+  `;
+}
+
+function renderProductPanel() {
+  const panel = $("[data-js='product-panel']");
+
+  if (!state.panelOpen) {
+    panel.innerHTML = "";
+    return;
+  }
+
+  const product = selectedProduct();
+  const deliveryAddressMissing = state.missingFields.includes("deliveryAddress");
+
+  panel.innerHTML = `
+    <aside class="product-panel" aria-label="Product order panel">
+      <div class="panel-header">
+        <div>
+          <p class="eyebrow">${product.categoryLabel}</p>
+          <h2>${text(product.name)}</h2>
+        </div>
+        <button class="chip" data-action="close-panel">Close</button>
+      </div>
+      <div class="panel-grid">
+        <div>
+          <div class="product-image product-image-${product.imageTone} panel-image"></div>
+          <p class="panel-note">${text(product.floristNote)}</p>
+          <strong>${product.priceLabel}</strong>
+        </div>
+        <form class="order-form" data-js="order-form">
+          <label class="field">
+            <span>Size</span>
+            <select name="size">
+              ${product.sizes
+                .map((size) => `<option ${state.order.size === size ? "selected" : ""}>${escapeHtml(size)}</option>`)
+                .join("")}
+            </select>
+          </label>
+          ${renderField("buyerName", "Buyer name")}
+          ${renderField("buyerPhone", "Buyer phone", "tel")}
+          <label class="field">
+            <span>Service</span>
+            <select name="serviceType">
+              <option ${state.order.serviceType === "Delivery" ? "selected" : ""}>Delivery</option>
+              <option ${state.order.serviceType === "Pickup" ? "selected" : ""}>Pickup</option>
+            </select>
+          </label>
+          ${renderField("quantity", "Quantity", "number")}
+          ${renderField("date", "Pickup / delivery date", "date")}
+          ${renderField("eventTime", "Event time")}
+          ${renderField("recipientName", "Recipient name")}
+          ${renderField("recipientPhone", "Recipient phone", "tel")}
+          <label class="field wide ${deliveryAddressMissing ? "has-error" : ""}">
+            <span>Delivery address</span>
+            <textarea name="deliveryAddress">${escapeHtml(state.order.deliveryAddress)}</textarea>
+            ${deliveryAddressMissing ? `<small>Required</small>` : ""}
+          </label>
+          <label class="field wide">
+            <span>Card message</span>
+            <textarea name="cardMessage">${escapeHtml(state.order.cardMessage)}</textarea>
+          </label>
+          <label class="field wide">
+            <span>Optional special request</span>
+            <textarea name="specialRequest">${escapeHtml(state.order.specialRequest)}</textarea>
+          </label>
+          <div class="panel-actions">
+            <button class="button" type="button" data-action="whatsapp-order">Order via WhatsApp</button>
+          </div>
+        </form>
+      </div>
+    </aside>
+  `;
+}
+
 function render() {
   renderHeader();
   renderHero();
   renderMenu();
   renderOrderInfo();
   renderFaq();
+  renderProductPanel();
 }
 
 document.addEventListener("click", (event) => {
@@ -174,10 +283,53 @@ document.addEventListener("click", (event) => {
     return;
   }
 
+  const productButton = event.target.closest("[data-action='select-product']");
+  if (productButton) {
+    const product = products.find((item) => item.id === productButton.dataset.productId);
+    state.selectedProductId = product.id;
+    state.order.size = product.sizes[0];
+    state.panelOpen = true;
+    state.missingFields = [];
+    renderProductPanel();
+    return;
+  }
+
+  if (event.target.closest("[data-action='close-panel']")) {
+    state.panelOpen = false;
+    renderProductPanel();
+    return;
+  }
+
+  if (event.target.closest("[data-action='whatsapp-order']")) {
+    const result = validateOrder(state.order);
+    state.missingFields = result.missing;
+    if (!result.valid) {
+      renderProductPanel();
+      return;
+    }
+
+    const product = selectedProduct();
+    const message = buildWhatsAppMessage(product, state.order);
+    window.open(buildWhatsAppUrl(WHATSAPP_NUMBER, message), "_blank", "noopener,noreferrer");
+    return;
+  }
+
   if (event.target.closest("[data-action='language']")) {
     state.language = state.language === "en" ? "zh" : "en";
     render();
   }
+});
+
+document.addEventListener("input", (event) => {
+  const field = event.target.closest("[name]");
+  if (!field || !field.closest("[data-js='order-form']")) return;
+  state.order[field.name] = field.value;
+});
+
+document.addEventListener("change", (event) => {
+  const field = event.target.closest("[name]");
+  if (!field || !field.closest("[data-js='order-form']")) return;
+  state.order[field.name] = field.value;
 });
 
 render();
