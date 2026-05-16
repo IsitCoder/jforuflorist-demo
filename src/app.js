@@ -44,6 +44,11 @@ const ui = {
     sameDay: "Same-day orders depend on flower availability.",
     replacements: "Flower colors and varieties may be adjusted based on daily stock.",
     paymentAfterConfirm: "Payment is recommended after WhatsApp confirmation.",
+    deliveryNote: "Delivery Note",
+    penangDelivery: "Penang delivery availability and delivery fee will be confirmed through WhatsApp.",
+    outstation: "Outstation delivery is not guaranteed and requires manual confirmation.",
+    accurateAddress: "Please provide accurate recipient contact and address details.",
+    noHotCar: "Flowers should not be left in a hot car.",
     paymentDetails: "Payment Details",
     sampleDetails: "Temporary sample details",
     bankTransfer: "Bank Transfer: jforuflorist flower studio",
@@ -85,6 +90,11 @@ const ui = {
     sameDay: "当日订单需视花材库存而定。",
     replacements: "花色与花材会依每日库存调整。",
     paymentAfterConfirm: "建议 WhatsApp 确认后才付款。",
+    deliveryNote: "配送提醒",
+    penangDelivery: "槟城配送与配送费用会通过 WhatsApp 确认。",
+    outstation: "外州配送不保证提供，需先人工确认。",
+    accurateAddress: "请提供准确的收件人电话与地址。",
+    noHotCar: "鲜花不建议放在高温车内。",
     paymentDetails: "付款资料",
     sampleDetails: "暂用示例资料",
     bankTransfer: "银行转账：jforuflorist flower studio",
@@ -223,23 +233,51 @@ function renderMenu() {
 function renderOrderInfo() {
   $("[data-js='order-info']").innerHTML = `
     <div class="section-inner info-grid">
-      <section>
-        <p class="eyebrow">${u("orderNotice")}</p>
-        <h2>${u("confirmBeforePayment")}</h2>
-        <ul>
-          <li>${u("sameDay")}</li>
-          <li>${u("replacements")}</li>
-          <li>${u("paymentAfterConfirm")}</li>
-        </ul>
-      </section>
-      <section>
-        <p class="eyebrow">${u("paymentDetails")}</p>
-        <h2>${u("sampleDetails")}</h2>
-        <p>${u("bankTransfer")}</p>
-        <p>${u("duitNow")}</p>
-        <p>${u("tng")}</p>
-      </section>
+      ${renderOrderNoticeCard()}
+      ${renderDeliveryNoteCard()}
+      ${renderPaymentCard()}
     </div>
+  `;
+}
+
+function renderOrderNoticeCard() {
+  return `
+    <section>
+      <p class="eyebrow">${u("orderNotice")}</p>
+      <h2>${u("confirmBeforePayment")}</h2>
+      <ul>
+        <li>${u("sameDay")}</li>
+        <li>${u("replacements")}</li>
+        <li>${u("paymentAfterConfirm")}</li>
+      </ul>
+    </section>
+  `;
+}
+
+function renderDeliveryNoteCard() {
+  return `
+    <section>
+      <p class="eyebrow">${u("deliveryNote")}</p>
+      <h2>${state.language === "en" ? "Fresh flower care" : "鲜花照顾提醒"}</h2>
+      <ul>
+        <li>${u("penangDelivery")}</li>
+        <li>${u("outstation")}</li>
+        <li>${u("accurateAddress")}</li>
+        <li>${u("noHotCar")}</li>
+      </ul>
+    </section>
+  `;
+}
+
+function renderPaymentCard() {
+  return `
+    <section>
+      <p class="eyebrow">${u("paymentDetails")}</p>
+      <h2>${u("sampleDetails")}</h2>
+      <p>${u("bankTransfer")}</p>
+      <p>${u("duitNow")}</p>
+      <p>${u("tng")}</p>
+    </section>
   `;
 }
 
@@ -347,6 +385,11 @@ function renderProductPanel() {
             <button class="button" type="button" data-action="whatsapp-order">${u("orderViaWhatsapp")}</button>
           </div>
         </form>
+        <div class="panel-info">
+          ${renderOrderNoticeCard()}
+          ${renderDeliveryNoteCard()}
+          ${renderPaymentCard()}
+        </div>
       </div>
     </aside>
   `;

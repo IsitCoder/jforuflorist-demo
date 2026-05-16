@@ -158,9 +158,17 @@ button {
 .hero-grid,
 .info-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.8fr);
   gap: 40px;
   align-items: center;
+}
+
+.hero-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.8fr);
+}
+
+.info-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
 }
 
 .hero h1,
@@ -333,6 +341,7 @@ button {
 
   .hero-grid,
   .info-grid,
+  .panel-info,
   .product-grid {
     grid-template-columns: 1fr;
   }
@@ -417,6 +426,13 @@ button {
   display: grid;
   grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.2fr);
   gap: 24px;
+}
+
+.panel-info {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
 }
 
 .panel-image {
