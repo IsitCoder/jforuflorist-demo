@@ -1,4 +1,4 @@
-export const WHATSAPP_NUMBER = "60123456789";
+export const WHATSAPP_NUMBER = "60135335523";
 
 export const categories = [
   { id: "all", labelKey: "all" },
