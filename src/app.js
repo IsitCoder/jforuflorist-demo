@@ -27,12 +27,102 @@ const state = {
 const $ = (selector) => document.querySelector(selector);
 const text = (value) => (typeof value === "string" ? value : value[state.language]);
 const t = (key) => translations[state.language][key] ?? key;
+const ui = {
+  en: {
+    home: "Home",
+    menu: "Menu",
+    orderInfo: "Order Info",
+    faq: "FAQ",
+    browseMenu: "Browse menu",
+    heroTitle: "jforuflorist flower studio",
+    heroText: "Sweet gifting flowers for birthdays, graduations, anniversaries, openings, and quiet comfort moments.",
+    menuEyebrow: "Menu",
+    menuTitle: "Choose your floral gift",
+    order: "Order",
+    orderNotice: "Order Notice",
+    confirmBeforePayment: "Please confirm before payment",
+    sameDay: "Same-day orders depend on flower availability.",
+    replacements: "Flower colors and varieties may be adjusted based on daily stock.",
+    paymentAfterConfirm: "Payment is recommended after WhatsApp confirmation.",
+    paymentDetails: "Payment Details",
+    sampleDetails: "Temporary sample details",
+    bankTransfer: "Bank Transfer: jforuflorist flower studio",
+    duitNow: "DuitNow / QR: Available after confirmation",
+    tng: "Touch 'n Go: Available after confirmation",
+    commonQuestions: "Common Questions",
+    close: "Close",
+    size: "Size",
+    buyerName: "Buyer name",
+    buyerPhone: "Buyer phone",
+    service: "Service",
+    delivery: "Delivery",
+    pickup: "Pickup",
+    quantity: "Quantity",
+    date: "Pickup / delivery date",
+    eventTime: "Event time",
+    recipientName: "Recipient name",
+    recipientPhone: "Recipient phone",
+    deliveryAddress: "Delivery address",
+    cardMessage: "Card message",
+    specialRequest: "Optional special request",
+    required: "Required",
+    orderViaWhatsapp: "Order via WhatsApp",
+    panelLabel: "Product order panel",
+  },
+  zh: {
+    home: "首页",
+    menu: "花礼菜单",
+    orderInfo: "下单须知",
+    faq: "常见问题",
+    browseMenu: "浏览花礼",
+    heroTitle: "jforuflorist 花艺工作室",
+    heroText: "为生日、毕业、纪念日、开张与慰问时刻准备的温暖花礼。",
+    menuEyebrow: "花礼菜单",
+    menuTitle: "选择你的花礼",
+    order: "下单",
+    orderNotice: "下单须知",
+    confirmBeforePayment: "付款前请先确认",
+    sameDay: "当日订单需视花材库存而定。",
+    replacements: "花色与花材会依每日库存调整。",
+    paymentAfterConfirm: "建议 WhatsApp 确认后才付款。",
+    paymentDetails: "付款资料",
+    sampleDetails: "暂用示例资料",
+    bankTransfer: "银行转账：jforuflorist flower studio",
+    duitNow: "DuitNow / QR：确认后提供",
+    tng: "Touch 'n Go：确认后提供",
+    commonQuestions: "常见问题",
+    close: "关闭",
+    size: "尺寸",
+    buyerName: "订购人姓名",
+    buyerPhone: "订购人电话",
+    service: "服务方式",
+    delivery: "配送",
+    pickup: "自取",
+    quantity: "数量",
+    date: "自取 / 配送日期",
+    eventTime: "使用时间",
+    recipientName: "收件人姓名",
+    recipientPhone: "收件人电话",
+    deliveryAddress: "配送地址",
+    cardMessage: "卡片留言",
+    specialRequest: "特别要求（可选）",
+    required: "必填",
+    orderViaWhatsapp: "通过 WhatsApp 下单",
+    panelLabel: "商品下单表格",
+  },
+};
+const u = (key) => ui[state.language][key] ?? key;
 const escapeHtml = (value) =>
   String(value ?? "")
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;");
+
+function categoryText(categoryId) {
+  const category = categories.find((item) => item.id === categoryId);
+  return category ? t(category.labelKey) : categoryId;
+}
 
 function renderHeader() {
   $("[data-js='header']").innerHTML = `
@@ -45,10 +135,10 @@ function renderHeader() {
         </span>
       </a>
       <nav class="nav-links" aria-label="Primary navigation">
-        <a href="#home">Home</a>
-        <a href="#menu">Menu</a>
-        <a href="#order-info">Order Info</a>
-        <a href="#faq">FAQ</a>
+        <a href="#home">${u("home")}</a>
+        <a href="#menu">${u("menu")}</a>
+        <a href="#order-info">${u("orderInfo")}</a>
+        <a href="#faq">${u("faq")}</a>
       </nav>
       <div class="nav-actions">
         <button class="chip" data-action="language">${state.language === "en" ? "中文" : "EN"}</button>
@@ -63,16 +153,12 @@ function renderHero() {
     <div class="section-inner hero-grid">
       <div class="hero-copy">
         <p class="eyebrow">Penang Florist</p>
-        <h1>${state.language === "en" ? "jforuflorist flower studio" : "jforuflorist 花艺工作室"}</h1>
+        <h1>${u("heroTitle")}</h1>
         <p class="hero-text">
-          ${
-            state.language === "en"
-              ? "Sweet gifting flowers for birthdays, graduations, anniversaries, openings, and quiet comfort moments."
-              : "为生日、毕业、纪念日、开张与慰问时刻准备的温暖花礼。"
-          }
+          ${u("heroText")}
         </p>
         <div class="hero-actions">
-          <a class="button" href="#menu">${state.language === "en" ? "Browse menu" : "浏览花礼"}</a>
+          <a class="button" href="#menu">${u("browseMenu")}</a>
           <a class="button secondary" href="https://wa.me/${WHATSAPP_NUMBER}" target="_blank" rel="noreferrer">WhatsApp</a>
         </div>
       </div>
@@ -103,13 +189,13 @@ function renderProductCard(product) {
     <article class="product-card">
       <div class="product-image product-image-${product.imageTone}"></div>
       <div class="product-body">
-        <p class="product-meta">${product.categoryLabel}</p>
+        <p class="product-meta">${categoryText(product.category)}</p>
         <h3>${text(product.name)}</h3>
         <p>${text(product.description)}</p>
         <div class="product-footer">
           <strong>${product.priceLabel}</strong>
           <button class="button secondary" data-action="select-product" data-product-id="${product.id}">
-            ${state.language === "en" ? "Order" : "下单"}
+            ${u("order")}
           </button>
         </div>
       </div>
@@ -122,8 +208,8 @@ function renderMenu() {
   $("[data-js='menu']").innerHTML = `
     <div class="section-inner">
       <div class="section-heading">
-        <p class="eyebrow">${state.language === "en" ? "Menu" : "花礼菜单"}</p>
-        <h2>${state.language === "en" ? "Choose your floral gift" : "选择你的花礼"}</h2>
+        <p class="eyebrow">${u("menuEyebrow")}</p>
+        <h2>${u("menuTitle")}</h2>
       </div>
       <div class="filter-group">${renderFilters(categories, state.category, "category")}</div>
       <div class="filter-group">${renderFilters(occasions, state.occasion, "occasion")}</div>
@@ -138,20 +224,20 @@ function renderOrderInfo() {
   $("[data-js='order-info']").innerHTML = `
     <div class="section-inner info-grid">
       <section>
-        <p class="eyebrow">${state.language === "en" ? "Order Notice" : "下单须知"}</p>
-        <h2>${state.language === "en" ? "Please confirm before payment" : "付款前请先确认"}</h2>
+        <p class="eyebrow">${u("orderNotice")}</p>
+        <h2>${u("confirmBeforePayment")}</h2>
         <ul>
-          <li>${state.language === "en" ? "Same-day orders depend on flower availability." : "当日订单需视花材库存而定。"}</li>
-          <li>${state.language === "en" ? "Flower colors and varieties may be adjusted based on daily stock." : "花色与花材会依每日库存调整。"}</li>
-          <li>${state.language === "en" ? "Payment is recommended after WhatsApp confirmation." : "建议 WhatsApp 确认后才付款。"}</li>
+          <li>${u("sameDay")}</li>
+          <li>${u("replacements")}</li>
+          <li>${u("paymentAfterConfirm")}</li>
         </ul>
       </section>
       <section>
-        <p class="eyebrow">${state.language === "en" ? "Payment Details" : "付款资料"}</p>
-        <h2>${state.language === "en" ? "Temporary sample details" : "暂用示例资料"}</h2>
-        <p>Bank Transfer: jforuflorist flower studio</p>
-        <p>DuitNow / QR: Available after confirmation</p>
-        <p>Touch 'n Go: Available after confirmation</p>
+        <p class="eyebrow">${u("paymentDetails")}</p>
+        <h2>${u("sampleDetails")}</h2>
+        <p>${u("bankTransfer")}</p>
+        <p>${u("duitNow")}</p>
+        <p>${u("tng")}</p>
       </section>
     </div>
   `;
@@ -161,8 +247,8 @@ function renderFaq() {
   $("[data-js='faq']").innerHTML = `
     <div class="section-inner">
       <div class="section-heading">
-        <p class="eyebrow">FAQ</p>
-        <h2>${state.language === "en" ? "Common Questions" : "常见问题"}</h2>
+        <p class="eyebrow">${u("faq")}</p>
+        <h2>${u("commonQuestions")}</h2>
       </div>
       <div class="faq-list">
         ${faq
@@ -184,13 +270,13 @@ function selectedProduct() {
   return products.find((product) => product.id === state.selectedProductId) ?? products[0];
 }
 
-function renderField(name, label, type = "text") {
+function renderField(name, labelKey, type = "text") {
   const isMissing = state.missingFields.includes(name);
   return `
     <label class="field ${isMissing ? "has-error" : ""}">
-      <span>${label}</span>
+      <span>${u(labelKey)}</span>
       <input type="${type}" name="${name}" value="${escapeHtml(state.order[name])}" />
-      ${isMissing ? `<small>Required</small>` : ""}
+      ${isMissing ? `<small>${u("required")}</small>` : ""}
     </label>
   `;
 }
@@ -207,13 +293,13 @@ function renderProductPanel() {
   const deliveryAddressMissing = state.missingFields.includes("deliveryAddress");
 
   panel.innerHTML = `
-    <aside class="product-panel" aria-label="Product order panel">
+    <aside class="product-panel" aria-label="${u("panelLabel")}">
       <div class="panel-header">
         <div>
-          <p class="eyebrow">${product.categoryLabel}</p>
+          <p class="eyebrow">${categoryText(product.category)}</p>
           <h2>${text(product.name)}</h2>
         </div>
-        <button class="chip" data-action="close-panel">Close</button>
+        <button class="chip" data-action="close-panel">${u("close")}</button>
       </div>
       <div class="panel-grid">
         <div>
@@ -223,42 +309,42 @@ function renderProductPanel() {
         </div>
         <form class="order-form" data-js="order-form">
           <label class="field">
-            <span>Size</span>
+            <span>${u("size")}</span>
             <select name="size">
               ${product.sizes
                 .map((size) => `<option ${state.order.size === size ? "selected" : ""}>${escapeHtml(size)}</option>`)
                 .join("")}
             </select>
           </label>
-          ${renderField("buyerName", "Buyer name")}
-          ${renderField("buyerPhone", "Buyer phone", "tel")}
+          ${renderField("buyerName", "buyerName")}
+          ${renderField("buyerPhone", "buyerPhone", "tel")}
           <label class="field">
-            <span>Service</span>
+            <span>${u("service")}</span>
             <select name="serviceType">
-              <option ${state.order.serviceType === "Delivery" ? "selected" : ""}>Delivery</option>
-              <option ${state.order.serviceType === "Pickup" ? "selected" : ""}>Pickup</option>
+              <option value="Delivery" ${state.order.serviceType === "Delivery" ? "selected" : ""}>${u("delivery")}</option>
+              <option value="Pickup" ${state.order.serviceType === "Pickup" ? "selected" : ""}>${u("pickup")}</option>
             </select>
           </label>
-          ${renderField("quantity", "Quantity", "number")}
-          ${renderField("date", "Pickup / delivery date", "date")}
-          ${renderField("eventTime", "Event time")}
-          ${renderField("recipientName", "Recipient name")}
-          ${renderField("recipientPhone", "Recipient phone", "tel")}
+          ${renderField("quantity", "quantity", "number")}
+          ${renderField("date", "date", "date")}
+          ${renderField("eventTime", "eventTime")}
+          ${renderField("recipientName", "recipientName")}
+          ${renderField("recipientPhone", "recipientPhone", "tel")}
           <label class="field wide ${deliveryAddressMissing ? "has-error" : ""}">
-            <span>Delivery address</span>
+            <span>${u("deliveryAddress")}</span>
             <textarea name="deliveryAddress">${escapeHtml(state.order.deliveryAddress)}</textarea>
-            ${deliveryAddressMissing ? `<small>Required</small>` : ""}
+            ${deliveryAddressMissing ? `<small>${u("required")}</small>` : ""}
           </label>
           <label class="field wide">
-            <span>Card message</span>
+            <span>${u("cardMessage")}</span>
             <textarea name="cardMessage">${escapeHtml(state.order.cardMessage)}</textarea>
           </label>
           <label class="field wide">
-            <span>Optional special request</span>
+            <span>${u("specialRequest")}</span>
             <textarea name="specialRequest">${escapeHtml(state.order.specialRequest)}</textarea>
           </label>
           <div class="panel-actions">
-            <button class="button" type="button" data-action="whatsapp-order">Order via WhatsApp</button>
+            <button class="button" type="button" data-action="whatsapp-order">${u("orderViaWhatsapp")}</button>
           </div>
         </form>
       </div>
