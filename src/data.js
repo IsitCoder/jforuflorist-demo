@@ -1,4 +1,13 @@
-export const WHATSAPP_NUMBER = "60135335523";
+export const WHATSAPP_NUMBER = "60162969982";
+
+export const contact = {
+  phone: "60162969982",
+  ssm: "JR0162620-K",
+  location: {
+    en: "Based in Nibong Tebal | Cameron Highland",
+    zh: "位于 Nibong Tebal | Cameron Highland",
+  },
+};
 
 export const categories = [
   { id: "all", labelKey: "all" },
@@ -29,6 +38,7 @@ export const products = [
     },
     priceLabel: "From RM 168",
     sizes: ["Petite", "Medium", "Grand"],
+    image: "./assets/flowers/product-pastel-bouquet.jpeg",
     imageTone: "peony",
     floristNote: {
       en: "Seasonal blooms may be adjusted while keeping the same sweet mood.",
@@ -47,6 +57,7 @@ export const products = [
     },
     priceLabel: "From RM 138",
     sizes: ["Standard", "Premium"],
+    image: "./assets/flowers/product-peach-bouquet.jpeg",
     imageTone: "sunny",
     floristNote: {
       en: "Ribbon and wrap colors can be matched to the graduation theme.",
@@ -65,6 +76,7 @@ export const products = [
     },
     priceLabel: "From RM 188",
     sizes: ["Classic", "Luxe"],
+    image: "./assets/flowers/hero-pair-bouquets.jpeg",
     imageTone: "box",
     floristNote: {
       en: "Best for office delivery, surprises, and table display.",
@@ -83,6 +95,7 @@ export const products = [
     },
     priceLabel: "From RM 268",
     sizes: ["Standard", "Grande"],
+    image: "./assets/flowers/gallery-event-wall.jpeg",
     imageTone: "basket",
     floristNote: {
       en: "Message stand card can be arranged after WhatsApp confirmation.",
@@ -101,11 +114,47 @@ export const products = [
     },
     priceLabel: "From RM 238",
     sizes: ["Standard", "Grande"],
+    image: "./assets/flowers/product-white-bouquet.jpeg",
     imageTone: "comfort",
     floristNote: {
       en: "Tone will be kept gentle and respectful.",
       zh: "整体色调会保持温和与庄重。",
     },
+  },
+];
+
+export const galleryImages = [
+  {
+    src: "./assets/flowers/hero-pair-bouquets.jpeg",
+    label: { en: "Signature paired bouquet arrangement", zh: "招牌双花束作品" },
+  },
+  {
+    src: "./assets/flowers/product-pastel-bouquet.jpeg",
+    label: { en: "Pastel bouquet with soft wrap", zh: "柔色包装花束" },
+  },
+  {
+    src: "./assets/flowers/product-peach-bouquet.jpeg",
+    label: { en: "Peach-toned celebration bouquet", zh: "蜜桃色庆祝花束" },
+  },
+  {
+    src: "./assets/flowers/product-dark-wrap.jpeg",
+    label: { en: "Dark wrap premium bouquet", zh: "深色包装高级花束" },
+  },
+  {
+    src: "./assets/flowers/product-white-bouquet.jpeg",
+    label: { en: "White bouquet for gentle occasions", zh: "白色温柔场合花束" },
+  },
+  {
+    src: "./assets/flowers/gallery-event-terrace.jpeg",
+    label: { en: "Event floral terrace styling", zh: "露台活动花艺布置" },
+  },
+  {
+    src: "./assets/flowers/gallery-event-wall.jpeg",
+    label: { en: "Event flower wall arrangement", zh: "活动花墙布置" },
+  },
+  {
+    src: "./assets/flowers/gallery-event-wide.jpeg",
+    label: { en: "Wide event floral installation", zh: "大型活动花艺布置" },
   },
 ];
 
@@ -121,6 +170,11 @@ export const translations = {
     anniversary: "Anniversary",
     grandOpening: "Grand Opening",
     condolence: "Condolence",
+    about: "About",
+    gallery: "Gallery",
+    reviewOrder: "Review Order",
+    sendWhatsappOrder: "Send WhatsApp Order",
+    editDetails: "Edit Details",
   },
   zh: {
     all: "全部",
@@ -133,6 +187,11 @@ export const translations = {
     anniversary: "纪念日",
     grandOpening: "开张",
     condolence: "慰问",
+    about: "关于我们",
+    gallery: "作品相册",
+    reviewOrder: "检查订单",
+    sendWhatsappOrder: "发送 WhatsApp 订单",
+    editDetails: "修改资料",
   },
 };
 
