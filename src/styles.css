@@ -496,6 +496,10 @@ button {
   .hero-visual {
     min-height: 340px;
   }
+
+  .hero-visual img {
+    min-height: 340px;
+  }
 }
 
 .product-panel-shell:not(:empty) {
