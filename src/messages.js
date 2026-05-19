@@ -21,6 +21,11 @@ export function filterProducts(products, category, occasion) {
 
 export function validateOrder(order) {
   const missing = requiredFields.filter((field) => !String(order[field] ?? "").trim());
+  const quantity = String(order.quantity ?? "").trim();
+  if (!missing.includes("quantity") && (!/^\d+$/.test(quantity) || Number(quantity) < 1)) {
+    missing.push("quantity");
+  }
+
   return { valid: missing.length === 0, missing };
 }
 

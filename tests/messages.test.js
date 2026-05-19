@@ -47,6 +47,17 @@ test("validateOrder reports missing required fields", () => {
   assert.deepEqual(result.missing, ["buyerName", "date"]);
 });
 
+test("validateOrder rejects invalid quantities", () => {
+  for (const quantity of ["0", "-1", "1.5", "abc"]) {
+    const result = validateOrder({ ...order, quantity });
+    assert.equal(result.valid, false);
+    assert.deepEqual(result.missing, ["quantity"]);
+  }
+
+  assert.deepEqual(validateOrder({ ...order, quantity: "1" }), { valid: true, missing: [] });
+  assert.deepEqual(validateOrder({ ...order, quantity: "2" }), { valid: true, missing: [] });
+});
+
 test("buildWhatsAppMessage includes selected product and order details", () => {
   const message = buildWhatsAppMessage({ name: "Sweet Peony Bouquet", categoryLabel: "Bouquet" }, order);
   assert.match(message, /Sweet Peony Bouquet/);
@@ -119,6 +130,15 @@ test("new redesign labels exist in both languages", () => {
     assert.equal(typeof translations[language].reviewOrder, "string");
     assert.equal(typeof translations[language].sendWhatsappOrder, "string");
     assert.equal(typeof translations[language].editDetails, "string");
+  }
+});
+
+test("review order UI labels exist in local app copy", () => {
+  const appSource = readFileSync(new URL("../src/app.js", import.meta.url), "utf8");
+
+  for (const key of ["reviewIntro", "reviewOrder", "editDetails", "sendWhatsappOrder"]) {
+    const matches = appSource.match(new RegExp(`${key}:\\s*"[^"]+"`, "g")) ?? [];
+    assert.equal(matches.length, 2);
   }
 });
 

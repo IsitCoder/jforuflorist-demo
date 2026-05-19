@@ -397,12 +397,12 @@ function selectedProduct() {
   return products.find((product) => product.id === state.selectedProductId) ?? products[0];
 }
 
-function renderField(name, labelKey, type = "text") {
+function renderField(name, labelKey, type = "text", attributes = "") {
   const isMissing = state.missingFields.includes(name);
   return `
     <label class="field ${isMissing ? "has-error" : ""}">
       <span>${u(labelKey)}</span>
-      <input type="${type}" name="${name}" value="${escapeHtml(state.order[name])}" />
+      <input type="${type}" name="${name}" value="${escapeHtml(state.order[name])}" ${attributes} />
       ${isMissing ? `<small>${u("required")}</small>` : ""}
     </label>
   `;
@@ -454,7 +454,7 @@ function renderOrderForm(product, deliveryAddressMissing) {
           <option value="Pickup" ${state.order.serviceType === "Pickup" ? "selected" : ""}>${u("pickup")}</option>
         </select>
       </label>
-      ${renderField("quantity", "quantity", "number")}
+      ${renderField("quantity", "quantity", "number", 'min="1" step="1" inputmode="numeric"')}
       ${renderField("date", "date", "date")}
       ${renderField("eventTime", "eventTime")}
       ${renderField("recipientName", "recipientName")}
