@@ -33,26 +33,50 @@ function productName(product) {
   return typeof product.name === "string" ? product.name : product.name.en;
 }
 
-export function buildOrderReviewItems(product, order) {
-  const specialRequest = String(order.specialRequest ?? "").trim() || "None";
-  const cardMessage = String(order.cardMessage ?? "").trim() || "None";
+const defaultReviewCopy = {
+  none: "None",
+  labels: {
+    product: "Product",
+    category: "Category",
+    price: "Price",
+    size: "Size",
+    quantity: "Quantity",
+    service: "Service",
+    date: "Pickup/Delivery Date",
+    eventTime: "Event Time",
+    buyerName: "Buyer Name",
+    buyerPhone: "Buyer Phone",
+    recipientName: "Recipient Name",
+    recipientPhone: "Recipient Phone",
+    deliveryAddress: "Delivery Address",
+    cardMessage: "Card Message",
+    specialRequest: "Special Request",
+  },
+};
+
+export function buildOrderReviewItems(product, order, copy = {}) {
+  const labels = { ...defaultReviewCopy.labels, ...(copy.labels ?? {}) };
+  const none = copy.none ?? defaultReviewCopy.none;
+  const values = copy.values ?? {};
+  const specialRequest = String(order.specialRequest ?? "").trim() || none;
+  const cardMessage = String(order.cardMessage ?? "").trim() || none;
 
   return [
-    { label: "Product", value: productName(product) },
-    { label: "Category", value: product.categoryLabel },
-    { label: "Price", value: product.priceLabel },
-    { label: "Size", value: order.size },
-    { label: "Quantity", value: order.quantity },
-    { label: "Service", value: order.serviceType },
-    { label: "Pickup/Delivery Date", value: order.date },
-    { label: "Event Time", value: order.eventTime },
-    { label: "Buyer Name", value: order.buyerName },
-    { label: "Buyer Phone", value: order.buyerPhone },
-    { label: "Recipient Name", value: order.recipientName },
-    { label: "Recipient Phone", value: order.recipientPhone },
-    { label: "Delivery Address", value: order.deliveryAddress },
-    { label: "Card Message", value: cardMessage },
-    { label: "Special Request", value: specialRequest },
+    { label: labels.product, value: values.productName ?? productName(product) },
+    { label: labels.category, value: values.category ?? product.categoryLabel },
+    { label: labels.price, value: product.priceLabel },
+    { label: labels.size, value: order.size },
+    { label: labels.quantity, value: order.quantity },
+    { label: labels.service, value: values.service ?? order.serviceType },
+    { label: labels.date, value: order.date },
+    { label: labels.eventTime, value: order.eventTime },
+    { label: labels.buyerName, value: order.buyerName },
+    { label: labels.buyerPhone, value: order.buyerPhone },
+    { label: labels.recipientName, value: order.recipientName },
+    { label: labels.recipientPhone, value: order.recipientPhone },
+    { label: labels.deliveryAddress, value: order.deliveryAddress },
+    { label: labels.cardMessage, value: cardMessage },
+    { label: labels.specialRequest, value: specialRequest },
   ];
 }
 

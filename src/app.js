@@ -102,6 +102,10 @@ const ui = {
     reviewOrder: "Review order",
     editDetails: "Edit details",
     sendWhatsappOrder: "Send WhatsApp order",
+    reviewProduct: "Product",
+    reviewCategory: "Category",
+    reviewPrice: "Price",
+    none: "None",
     panelLabel: "Product order panel",
   },
   zh: {
@@ -162,6 +166,10 @@ const ui = {
     reviewOrder: "检查订单",
     editDetails: "修改资料",
     sendWhatsappOrder: "发送 WhatsApp 订单",
+    reviewProduct: "商品",
+    reviewCategory: "类别",
+    reviewPrice: "价格",
+    none: "无",
     panelLabel: "商品下单表格",
   },
 };
@@ -409,8 +417,36 @@ function renderField(name, labelKey, type = "text", attributes = "") {
   `;
 }
 
+function orderReviewCopy(product) {
+  return {
+    none: u("none"),
+    labels: {
+      product: u("reviewProduct"),
+      category: u("reviewCategory"),
+      price: u("reviewPrice"),
+      size: u("size"),
+      quantity: u("quantity"),
+      service: u("service"),
+      date: u("date"),
+      eventTime: u("eventTime"),
+      buyerName: u("buyerName"),
+      buyerPhone: u("buyerPhone"),
+      recipientName: u("recipientName"),
+      recipientPhone: u("recipientPhone"),
+      deliveryAddress: u("deliveryAddress"),
+      cardMessage: u("cardMessage"),
+      specialRequest: u("specialRequest"),
+    },
+    values: {
+      productName: text(product.name),
+      category: categoryText(product.category),
+      service: state.order.serviceType === "Delivery" ? u("delivery") : u("pickup"),
+    },
+  };
+}
+
 function renderOrderReview(product) {
-  const reviewItems = buildOrderReviewItems(product, state.order);
+  const reviewItems = buildOrderReviewItems(product, state.order, orderReviewCopy(product));
   return `
     <div class="order-review">
       <p class="eyebrow">${u("reviewOrder")}</p>
