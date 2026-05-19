@@ -88,8 +88,10 @@ test("florist contact configuration uses provided shop details", () => {
 
 test("products and gallery use local flower photo assets", () => {
   assert.ok(floristProducts.every((product) => product.image?.startsWith("./assets/flowers/")));
-  assert.ok(galleryImages.length >= 6);
+  assert.ok(galleryImages.length >= 8);
   assert.ok(galleryImages.every((image) => image.src.startsWith("./assets/flowers/")));
+  assert.ok(galleryImages.every((image) => typeof image.label?.en === "string"));
+  assert.ok(galleryImages.every((image) => typeof image.label?.zh === "string"));
 });
 
 test("new redesign labels exist in both languages", () => {

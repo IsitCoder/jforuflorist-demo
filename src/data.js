@@ -126,35 +126,35 @@ export const products = [
 export const galleryImages = [
   {
     src: "./assets/flowers/hero-pair-bouquets.jpeg",
-    alt: { en: "Signature paired bouquet arrangement", zh: "招牌双花束作品" },
+    label: { en: "Signature paired bouquet arrangement", zh: "招牌双花束作品" },
   },
   {
     src: "./assets/flowers/product-pastel-bouquet.jpeg",
-    alt: { en: "Pastel bouquet with soft wrap", zh: "柔色包装花束" },
+    label: { en: "Pastel bouquet with soft wrap", zh: "柔色包装花束" },
   },
   {
     src: "./assets/flowers/product-peach-bouquet.jpeg",
-    alt: { en: "Peach-toned celebration bouquet", zh: "蜜桃色庆祝花束" },
+    label: { en: "Peach-toned celebration bouquet", zh: "蜜桃色庆祝花束" },
   },
   {
     src: "./assets/flowers/product-dark-wrap.jpeg",
-    alt: { en: "Dark wrap premium bouquet", zh: "深色包装高级花束" },
+    label: { en: "Dark wrap premium bouquet", zh: "深色包装高级花束" },
   },
   {
     src: "./assets/flowers/product-white-bouquet.jpeg",
-    alt: { en: "White bouquet for gentle occasions", zh: "白色温柔场合花束" },
+    label: { en: "White bouquet for gentle occasions", zh: "白色温柔场合花束" },
   },
   {
     src: "./assets/flowers/gallery-event-terrace.jpeg",
-    alt: { en: "Event floral terrace styling", zh: "露台活动花艺布置" },
+    label: { en: "Event floral terrace styling", zh: "露台活动花艺布置" },
   },
   {
     src: "./assets/flowers/gallery-event-wall.jpeg",
-    alt: { en: "Event flower wall arrangement", zh: "活动花墙布置" },
+    label: { en: "Event flower wall arrangement", zh: "活动花墙布置" },
   },
   {
     src: "./assets/flowers/gallery-event-wide.jpeg",
-    alt: { en: "Wide event floral installation", zh: "大型活动花艺布置" },
+    label: { en: "Wide event floral installation", zh: "大型活动花艺布置" },
   },
 ];
 
