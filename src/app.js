@@ -218,10 +218,11 @@ function renderHero() {
         </div>
       </div>
       <div class="hero-visual" aria-label="Soft gifting floral arrangement preview">
-        <div class="flower-shape shape-one"></div>
-        <div class="flower-shape shape-two"></div>
-        <div class="flower-shape shape-three"></div>
-        <p>Sweet Gifting Mood</p>
+        <img src="./assets/flowers/hero-pair-bouquets.jpeg" alt="Pastel jforuflorist bouquets" />
+        <div class="hero-card">
+          <span>Sweet Gifting Mood</span>
+          <strong>Nibong Tebal | Cameron Highland</strong>
+        </div>
       </div>
     </div>
   `;
