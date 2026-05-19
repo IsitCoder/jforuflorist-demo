@@ -58,7 +58,8 @@ button {
 
 .hero,
 .menu-section,
-.info-section,
+.about-section,
+.gallery-section,
 .faq-section {
   padding: 72px 0;
 }
@@ -100,7 +101,8 @@ button {
 @media (max-width: 720px) {
   .hero,
   .menu-section,
-  .info-section,
+  .about-section,
+  .gallery-section,
   .faq-section {
     padding: 48px 0;
   }
@@ -156,7 +158,9 @@ button {
 }
 
 .hero-grid,
-.info-grid {
+.about-grid,
+.info-grid,
+.order-help-grid {
   display: grid;
   gap: 40px;
   align-items: center;
@@ -171,9 +175,22 @@ button {
   align-items: stretch;
 }
 
+.about-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.7fr);
+  align-items: start;
+}
+
+.order-help-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  margin-bottom: 28px;
+}
+
 .hero h1,
 .section-heading h2,
-.info-grid h2 {
+.about-grid h2,
+.info-grid h2,
+.order-help-grid h2 {
   margin: 0;
   font-family: Georgia, "Times New Roman", serif;
   letter-spacing: 0;
@@ -249,8 +266,17 @@ button {
   margin-top: 26px;
 }
 
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
 .product-card,
 .faq-item,
+.contact-panel,
+.gallery-card,
+.order-help-grid section,
 .info-grid section {
   background: var(--surface);
   border: 1px solid var(--line);
@@ -259,8 +285,12 @@ button {
 }
 
 .product-image {
+  display: block;
+  width: 100%;
+  height: 220px;
   min-height: 220px;
   border-radius: var(--radius) var(--radius) 0 0;
+  object-fit: cover;
 }
 
 .product-image-peony {
@@ -284,9 +314,61 @@ button {
 }
 
 .product-body,
+.contact-panel,
+.gallery-card,
+.order-help-grid section,
 .info-grid section,
 .faq-item {
   padding: 20px;
+}
+
+.about-grid p,
+.split-heading p,
+.contact-panel dd,
+.gallery-card figcaption {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.contact-panel dl {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+}
+
+.contact-panel dt {
+  font-weight: 750;
+}
+
+.contact-panel dd {
+  margin: 4px 0 0;
+}
+
+.split-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.split-heading > p {
+  max-width: 360px;
+}
+
+.gallery-card {
+  margin: 0;
+}
+
+.gallery-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--radius);
+}
+
+.gallery-card figcaption {
+  margin-top: 10px;
+  font-weight: 650;
 }
 
 .product-body h3 {
@@ -314,6 +396,8 @@ button {
 }
 
 .faq-item p,
+.order-help-grid li,
+.order-help-grid p,
 .info-grid li,
 .info-grid p {
   color: var(--muted);
@@ -340,10 +424,20 @@ button {
   }
 
   .hero-grid,
+  .about-grid,
   .info-grid,
+  .order-help-grid,
   .panel-info,
   .product-grid {
     grid-template-columns: 1fr;
+  }
+
+  .gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .split-heading {
+    display: block;
   }
 
   .hero h1 {
@@ -436,7 +530,11 @@ button {
 }
 
 .panel-image {
+  display: block;
+  width: 100%;
+  object-fit: cover;
   border-radius: var(--radius);
+  height: 320px;
   min-height: 320px;
 }
 

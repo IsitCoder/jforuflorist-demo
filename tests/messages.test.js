@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import {
   buildWhatsAppMessage,
   buildWhatsAppUrl,
@@ -102,4 +103,12 @@ test("new redesign labels exist in both languages", () => {
     assert.equal(typeof translations[language].sendWhatsappOrder, "string");
     assert.equal(typeof translations[language].editDetails, "string");
   }
+});
+
+test("page structure contains redesigned single-page sections", () => {
+  const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+  assert.match(html, /id="about"/);
+  assert.match(html, /id="gallery"/);
+  assert.match(html, /id="faq"/);
+  assert.doesNotMatch(html, /id="order-info"/);
 });

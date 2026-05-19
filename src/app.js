@@ -1,4 +1,13 @@
-import { categories, faq, occasions, products, translations, WHATSAPP_NUMBER } from "./data.js";
+import {
+  categories,
+  contact,
+  faq,
+  galleryImages,
+  occasions,
+  products,
+  translations,
+  WHATSAPP_NUMBER,
+} from "./data.js";
 import { buildWhatsAppMessage, buildWhatsAppUrl, filterProducts, validateOrder } from "./messages.js";
 
 const state = {
@@ -33,6 +42,16 @@ const ui = {
     menu: "Menu",
     orderInfo: "Order Info",
     faq: "FAQ",
+    aboutTitle: "Flowers for soft gifting moments",
+    aboutText:
+      "jforuflorist flower studio creates gentle bouquets, flower boxes, flower baskets, and event arrangements for thoughtful celebrations and comfort moments.",
+    contactTitle: "Studio details",
+    phone: "Phone / WhatsApp",
+    location: "Location",
+    ssm: "SSM",
+    galleryTitle: "Fresh from the studio",
+    galleryText: "A curated look at bouquet styles and event floral moments.",
+    orderingHelp: "Ordering Help",
     browseMenu: "Browse menu",
     heroTitle: "jforuflorist flower studio",
     heroText: "Sweet gifting flowers for birthdays, graduations, anniversaries, openings, and quiet comfort moments.",
@@ -79,6 +98,16 @@ const ui = {
     menu: "花礼菜单",
     orderInfo: "下单须知",
     faq: "常见问题",
+    aboutTitle: "为温柔心意准备的花礼",
+    aboutText:
+      "jforuflorist 花艺工作室制作花束、花盒、花篮与活动花艺，为庆祝、送礼与慰问时刻准备温柔花礼。",
+    contactTitle: "店铺资料",
+    phone: "电话 / WhatsApp",
+    location: "地点",
+    ssm: "SSM",
+    galleryTitle: "花艺作品",
+    galleryText: "精选花束风格与活动花艺布置。",
+    orderingHelp: "下单帮助",
     browseMenu: "浏览花礼",
     heroTitle: "jforuflorist 花艺工作室",
     heroText: "为生日、毕业、纪念日、开张与慰问时刻准备的温暖花礼。",
@@ -147,7 +176,8 @@ function renderHeader() {
       <nav class="nav-links" aria-label="Primary navigation">
         <a href="#home">${u("home")}</a>
         <a href="#menu">${u("menu")}</a>
-        <a href="#order-info">${u("orderInfo")}</a>
+        <a href="#about">${t("about")}</a>
+        <a href="#gallery">${t("gallery")}</a>
         <a href="#faq">${u("faq")}</a>
       </nav>
       <div class="nav-actions">
@@ -197,7 +227,7 @@ function renderFilters(items, active, type) {
 function renderProductCard(product) {
   return `
     <article class="product-card">
-      <div class="product-image product-image-${product.imageTone}"></div>
+      <img class="product-image" src="${product.image}" alt="${escapeHtml(text(product.name))}" loading="lazy" />
       <div class="product-body">
         <p class="product-meta">${categoryText(product.category)}</p>
         <h3>${text(product.name)}</h3>
@@ -230,12 +260,48 @@ function renderMenu() {
   `;
 }
 
-function renderOrderInfo() {
-  $("[data-js='order-info']").innerHTML = `
-    <div class="section-inner info-grid">
-      ${renderOrderNoticeCard()}
-      ${renderDeliveryNoteCard()}
-      ${renderPaymentCard()}
+function renderAbout() {
+  $("[data-js='about']").innerHTML = `
+    <div class="section-inner about-grid">
+      <div>
+        <p class="eyebrow">${t("about")}</p>
+        <h2>${u("aboutTitle")}</h2>
+        <p>${u("aboutText")}</p>
+      </div>
+      <div class="contact-panel">
+        <p class="eyebrow">${u("contactTitle")}</p>
+        <dl>
+          <div><dt>${u("location")}</dt><dd>${text(contact.location)}</dd></div>
+          <div><dt>${u("phone")}</dt><dd><a href="https://wa.me/${WHATSAPP_NUMBER}" target="_blank" rel="noreferrer">${contact.phone}</a></dd></div>
+          <div><dt>${u("ssm")}</dt><dd>${contact.ssm}</dd></div>
+        </dl>
+      </div>
+    </div>
+  `;
+}
+
+function renderGallery() {
+  $("[data-js='gallery']").innerHTML = `
+    <div class="section-inner">
+      <div class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">${t("gallery")}</p>
+          <h2>${u("galleryTitle")}</h2>
+        </div>
+        <p>${u("galleryText")}</p>
+      </div>
+      <div class="gallery-grid">
+        ${galleryImages
+          .map(
+            (image) => `
+          <figure class="gallery-card">
+            <img src="${image.src}" alt="${escapeHtml(text(image.label))}" loading="lazy" />
+            <figcaption>${text(image.label)}</figcaption>
+          </figure>
+        `
+          )
+          .join("")}
+      </div>
     </div>
   `;
 }
@@ -287,6 +353,14 @@ function renderFaq() {
       <div class="section-heading">
         <p class="eyebrow">${u("faq")}</p>
         <h2>${u("commonQuestions")}</h2>
+      </div>
+      <div class="section-heading">
+        <p class="eyebrow">${u("orderingHelp")}</p>
+      </div>
+      <div class="order-help-grid">
+        ${renderOrderNoticeCard()}
+        ${renderDeliveryNoteCard()}
+        ${renderPaymentCard()}
       </div>
       <div class="faq-list">
         ${faq
@@ -341,7 +415,7 @@ function renderProductPanel() {
       </div>
       <div class="panel-grid">
         <div>
-          <div class="product-image product-image-${product.imageTone} panel-image"></div>
+          <img class="panel-image" src="${product.image}" alt="${escapeHtml(text(product.name))}" />
           <p class="panel-note">${text(product.floristNote)}</p>
           <strong>${product.priceLabel}</strong>
         </div>
@@ -399,7 +473,8 @@ function render() {
   renderHeader();
   renderHero();
   renderMenu();
-  renderOrderInfo();
+  renderAbout();
+  renderGallery();
   renderFaq();
   renderProductPanel();
 }
