@@ -24,16 +24,42 @@ export function validateOrder(order) {
   return { valid: missing.length === 0, missing };
 }
 
+function productName(product) {
+  return typeof product.name === "string" ? product.name : product.name.en;
+}
+
+export function buildOrderReviewItems(product, order) {
+  const specialRequest = String(order.specialRequest ?? "").trim() || "None";
+  const cardMessage = String(order.cardMessage ?? "").trim() || "None";
+
+  return [
+    { label: "Product", value: productName(product) },
+    { label: "Category", value: product.categoryLabel },
+    { label: "Price", value: product.priceLabel },
+    { label: "Size", value: order.size },
+    { label: "Quantity", value: order.quantity },
+    { label: "Service", value: order.serviceType },
+    { label: "Pickup/Delivery Date", value: order.date },
+    { label: "Event Time", value: order.eventTime },
+    { label: "Buyer Name", value: order.buyerName },
+    { label: "Buyer Phone", value: order.buyerPhone },
+    { label: "Recipient Name", value: order.recipientName },
+    { label: "Recipient Phone", value: order.recipientPhone },
+    { label: "Delivery Address", value: order.deliveryAddress },
+    { label: "Card Message", value: cardMessage },
+    { label: "Special Request", value: specialRequest },
+  ];
+}
+
 export function buildWhatsAppMessage(product, order) {
   const specialRequest = String(order.specialRequest ?? "").trim() || "None";
   const cardMessage = String(order.cardMessage ?? "").trim() || "None";
-  const productName = typeof product.name === "string" ? product.name : product.name.en;
 
   return [
     "Hi jforuflorist flower studio, I would like to place an order.",
     "",
     "Order Details",
-    `Product: ${productName}`,
+    `Product: ${productName(product)}`,
     `Category: ${product.categoryLabel}`,
     `Size: ${order.size}`,
     `Quantity: ${order.quantity}`,

@@ -8,7 +8,13 @@ import {
   translations,
   WHATSAPP_NUMBER,
 } from "./data.js";
-import { buildWhatsAppMessage, buildWhatsAppUrl, filterProducts, validateOrder } from "./messages.js";
+import {
+  buildOrderReviewItems,
+  buildWhatsAppMessage,
+  buildWhatsAppUrl,
+  filterProducts,
+  validateOrder,
+} from "./messages.js";
 
 const state = {
   language: "en",
@@ -16,6 +22,7 @@ const state = {
   occasion: "all",
   selectedProductId: products[0].id,
   panelOpen: false,
+  orderStep: "form",
   order: {
     buyerName: "",
     buyerPhone: "",
@@ -91,6 +98,10 @@ const ui = {
     specialRequest: "Optional special request",
     required: "Required",
     orderViaWhatsapp: "Order via WhatsApp",
+    reviewIntro: "Please check the order details before sending to WhatsApp.",
+    reviewOrder: "Review order",
+    editDetails: "Edit details",
+    sendWhatsappOrder: "Send WhatsApp order",
     panelLabel: "Product order panel",
   },
   zh: {
@@ -147,6 +158,10 @@ const ui = {
     specialRequest: "特别要求（可选）",
     required: "必填",
     orderViaWhatsapp: "通过 WhatsApp 下单",
+    reviewIntro: "发送到 WhatsApp 前，请先检查订单资料。",
+    reviewOrder: "检查订单",
+    editDetails: "修改资料",
+    sendWhatsappOrder: "发送 WhatsApp 订单",
     panelLabel: "商品下单表格",
   },
 };
@@ -393,6 +408,77 @@ function renderField(name, labelKey, type = "text") {
   `;
 }
 
+function renderOrderReview(product) {
+  const reviewItems = buildOrderReviewItems(product, state.order);
+  return `
+    <div class="order-review">
+      <p class="eyebrow">${u("reviewOrder")}</p>
+      <p>${u("reviewIntro")}</p>
+      <dl>
+        ${reviewItems
+          .map(
+            (item) => `
+          <div>
+            <dt>${escapeHtml(item.label)}</dt>
+            <dd>${escapeHtml(item.value)}</dd>
+          </div>
+        `
+          )
+          .join("")}
+      </dl>
+      <div class="panel-actions">
+        <button class="button secondary" type="button" data-action="edit-order">${u("editDetails")}</button>
+        <button class="button" type="button" data-action="send-reviewed-order">${u("sendWhatsappOrder")}</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderOrderForm(product, deliveryAddressMissing) {
+  return `
+    <form class="order-form" data-js="order-form">
+      <label class="field">
+        <span>${u("size")}</span>
+        <select name="size">
+          ${product.sizes
+            .map((size) => `<option ${state.order.size === size ? "selected" : ""}>${escapeHtml(size)}</option>`)
+            .join("")}
+        </select>
+      </label>
+      ${renderField("buyerName", "buyerName")}
+      ${renderField("buyerPhone", "buyerPhone", "tel")}
+      <label class="field">
+        <span>${u("service")}</span>
+        <select name="serviceType">
+          <option value="Delivery" ${state.order.serviceType === "Delivery" ? "selected" : ""}>${u("delivery")}</option>
+          <option value="Pickup" ${state.order.serviceType === "Pickup" ? "selected" : ""}>${u("pickup")}</option>
+        </select>
+      </label>
+      ${renderField("quantity", "quantity", "number")}
+      ${renderField("date", "date", "date")}
+      ${renderField("eventTime", "eventTime")}
+      ${renderField("recipientName", "recipientName")}
+      ${renderField("recipientPhone", "recipientPhone", "tel")}
+      <label class="field wide ${deliveryAddressMissing ? "has-error" : ""}">
+        <span>${u("deliveryAddress")}</span>
+        <textarea name="deliveryAddress">${escapeHtml(state.order.deliveryAddress)}</textarea>
+        ${deliveryAddressMissing ? `<small>${u("required")}</small>` : ""}
+      </label>
+      <label class="field wide">
+        <span>${u("cardMessage")}</span>
+        <textarea name="cardMessage">${escapeHtml(state.order.cardMessage)}</textarea>
+      </label>
+      <label class="field wide">
+        <span>${u("specialRequest")}</span>
+        <textarea name="specialRequest">${escapeHtml(state.order.specialRequest)}</textarea>
+      </label>
+      <div class="panel-actions">
+        <button class="button" type="button" data-action="review-order">${u("reviewOrder")}</button>
+      </div>
+    </form>
+  `;
+}
+
 function renderProductPanel() {
   const panel = $("[data-js='product-panel']");
 
@@ -419,46 +505,7 @@ function renderProductPanel() {
           <p class="panel-note">${text(product.floristNote)}</p>
           <strong>${product.priceLabel}</strong>
         </div>
-        <form class="order-form" data-js="order-form">
-          <label class="field">
-            <span>${u("size")}</span>
-            <select name="size">
-              ${product.sizes
-                .map((size) => `<option ${state.order.size === size ? "selected" : ""}>${escapeHtml(size)}</option>`)
-                .join("")}
-            </select>
-          </label>
-          ${renderField("buyerName", "buyerName")}
-          ${renderField("buyerPhone", "buyerPhone", "tel")}
-          <label class="field">
-            <span>${u("service")}</span>
-            <select name="serviceType">
-              <option value="Delivery" ${state.order.serviceType === "Delivery" ? "selected" : ""}>${u("delivery")}</option>
-              <option value="Pickup" ${state.order.serviceType === "Pickup" ? "selected" : ""}>${u("pickup")}</option>
-            </select>
-          </label>
-          ${renderField("quantity", "quantity", "number")}
-          ${renderField("date", "date", "date")}
-          ${renderField("eventTime", "eventTime")}
-          ${renderField("recipientName", "recipientName")}
-          ${renderField("recipientPhone", "recipientPhone", "tel")}
-          <label class="field wide ${deliveryAddressMissing ? "has-error" : ""}">
-            <span>${u("deliveryAddress")}</span>
-            <textarea name="deliveryAddress">${escapeHtml(state.order.deliveryAddress)}</textarea>
-            ${deliveryAddressMissing ? `<small>${u("required")}</small>` : ""}
-          </label>
-          <label class="field wide">
-            <span>${u("cardMessage")}</span>
-            <textarea name="cardMessage">${escapeHtml(state.order.cardMessage)}</textarea>
-          </label>
-          <label class="field wide">
-            <span>${u("specialRequest")}</span>
-            <textarea name="specialRequest">${escapeHtml(state.order.specialRequest)}</textarea>
-          </label>
-          <div class="panel-actions">
-            <button class="button" type="button" data-action="whatsapp-order">${u("orderViaWhatsapp")}</button>
-          </div>
-        </form>
+        ${state.orderStep === "review" ? renderOrderReview(product) : renderOrderForm(product, deliveryAddressMissing)}
         <div class="panel-info">
           ${renderOrderNoticeCard()}
           ${renderDeliveryNoteCard()}
@@ -493,6 +540,7 @@ document.addEventListener("click", (event) => {
     state.selectedProductId = product.id;
     state.order.size = product.sizes[0];
     state.panelOpen = true;
+    state.orderStep = "form";
     state.missingFields = [];
     renderProductPanel();
     return;
@@ -504,10 +552,30 @@ document.addEventListener("click", (event) => {
     return;
   }
 
-  if (event.target.closest("[data-action='whatsapp-order']")) {
+  if (event.target.closest("[data-action='review-order']")) {
     const result = validateOrder(state.order);
     state.missingFields = result.missing;
     if (!result.valid) {
+      renderProductPanel();
+      return;
+    }
+
+    state.orderStep = "review";
+    renderProductPanel();
+    return;
+  }
+
+  if (event.target.closest("[data-action='edit-order']")) {
+    state.orderStep = "form";
+    renderProductPanel();
+    return;
+  }
+
+  if (event.target.closest("[data-action='send-reviewed-order']")) {
+    const result = validateOrder(state.order);
+    state.missingFields = result.missing;
+    if (!result.valid) {
+      state.orderStep = "form";
       renderProductPanel();
       return;
     }

@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
+  buildOrderReviewItems,
   buildWhatsAppMessage,
   buildWhatsAppUrl,
   filterProducts,
@@ -63,6 +64,22 @@ test("buildWhatsAppMessage supports localized product data", () => {
   const message = buildWhatsAppMessage(floristProducts[0], order);
   assert.match(message, /Product: Sweet Peony Bouquet/);
   assert.doesNotMatch(message, /\[object Object\]/);
+});
+
+test("buildOrderReviewItems summarizes buyer order before WhatsApp", () => {
+  const items = buildOrderReviewItems(
+    { name: { en: "Sweet Peony Bouquet" }, categoryLabel: "Bouquet", priceLabel: "From RM 168" },
+    order
+  );
+
+  assert.deepEqual(items.slice(0, 4), [
+    { label: "Product", value: "Sweet Peony Bouquet" },
+    { label: "Category", value: "Bouquet" },
+    { label: "Price", value: "From RM 168" },
+    { label: "Size", value: "Medium" },
+  ]);
+  assert.ok(items.some((item) => item.label === "Buyer Phone" && item.value === "0123456789"));
+  assert.ok(items.some((item) => item.label === "Special Request" && item.value === "Pastel pink please"));
 });
 
 test("buildWhatsAppMessage prints None for empty optional text", () => {
